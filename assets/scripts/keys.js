@@ -5,6 +5,10 @@ exports.spotify = {
   secret: process.env.SPOTIFY_SECRET
 };
 
-exports.BIT = {
+exports.bit = {
   id: process.env.BIT_ID
+};
+
+exports.omdb = {
+  id: process.env.OMDB_ID
 };

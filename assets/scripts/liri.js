@@ -5,7 +5,8 @@ const moment = require('moment');
 const axios = require('axios');
 const Spotify = require('node-spotify-api');
 
-// console.log(keys.BIT.id);
+console.log(keys.bit.id);
+console.log(keys.omdb.id);
 
 const lookupCommand = arguments => {
   switch (arguments[2]) {
@@ -66,7 +67,7 @@ const formatArgs = (num, arguments = process.argv) => {
  * @param {string} query the artist to be queried
  * @param {number} id the api id
  */
-const getBandsInTown = (query, id = keys.BIT.id) => {
+const getBandsInTown = (query, id = keys.bit.id) => {
   axios
     .get('https://rest.bandsintown.com/artists/' + query + '/events?app_id=' + id)
     .then(res => {
@@ -115,16 +116,59 @@ const getSpotifySong = (query, id = keys.spotify.id, secret = keys.spotify.secre
   spotify
     .search({ type: 'track', query: query })
     .then(res => {
-      res.tracks.items.forEach(track => {
-        console.log('Artist:', track.artists[0].name);
-        console.log('Song:', track.name);
-        console.log('Preview:', track.preview_url);
-        console.log('Album:', track.album.name);
-        console.log('--------------------------------------------------');
-      });
+      if (!res.tracks.items.length) {
+        console.log('No matching songs found for ', query);
+      } else {
+        res.tracks.items.forEach(track => {
+          console.log('Artist:', track.artists[0].name);
+          console.log('Song:', track.name);
+          console.log('Preview:', track.preview_url);
+          console.log('Album:', track.album.name);
+          console.log('--------------------------------------------------');
+        });
+      }
     })
     .catch(err => {
       console.log(err);
+    });
+};
+
+/**
+ * function used to get movie information
+ * @param {string} query the artist to be queried
+ * @param {number} id the api id
+ */
+const getMovie = (query, id = keys.omdb.id) => {
+  axios
+    .get('https://rest.bandsintown.com/artists/' + query + '/events?app_id=' + id)
+    .then(res => {
+      if (!res.data.length) {
+        console.log('No venue found for artist ' + query);
+      } else {
+        res.data.forEach(value => {
+          console.log('Venue Name:', value.venue.name);
+          console.log('Venue Located In:', value.venue.city);
+          console.log('Event Date:', moment(value.datetime).format('MM/DD/YYYY'));
+          console.log('--------------------------------------------------');
+        });
+      }
+    })
+    .catch(error => {
+      if (error.response) {
+        // The request was made and the server responded with a status code
+        // that falls out of the range of 2xx
+        console.log(error.response.data);
+        console.log(error.response.status);
+        console.log(error.response.headers);
+      } else if (error.request) {
+        // The request was made but no response was received
+        // `error.request` is an object that comes back with details pertaining to the error that occurred.
+        console.log(error.request);
+      } else {
+        // Something happened in setting up the request that triggered an Error
+        console.log('Error', error.message);
+      }
+      console.log(error.config);
     });
 };
 

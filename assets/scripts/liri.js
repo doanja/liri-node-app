@@ -191,6 +191,10 @@ const getMovie = (query, id = keys.omdb.id) => {
     });
 };
 
+/**
+ * function to parse file and run the lookupCommand
+ * @param {string} filename the path of the file to be read from
+ */
 const getInputFromFile = filename => {
   fs.readFile(filename, 'utf8', (error, data) => {
     // If the code experiences any errors it will log the error to the console.
@@ -215,4 +219,21 @@ const getInputFromFile = filename => {
   });
 };
 
-console.log(lookupCommand(process.argv[2], removeFirstThreeArgs()));
+const writeInputToFile = (filename, text) => {
+  // Next, we append the text into the "sample.txt" file.
+  // If the file didn't exist, then it gets created on the fly.
+  fs.appendFile(filename, text + '\n', err => {
+    // If an error was experienced we will log it.
+    if (err) {
+      console.log(err);
+    }
+
+    // If no error is experienced, we'll log the phrase "Content Added" to our node console.
+    else {
+      console.log('Content Added!');
+    }
+  });
+};
+
+// console.log(lookupCommand(process.argv[2], removeFirstThreeArgs()));
+writeInputToFile('../files/log.txt', 'testing');

@@ -22,13 +22,17 @@ const lookupCommand = arguments => {
     case 'spotify-this-song':
       // check to see if song was provided in the arguments
       if (!arguments[3]) {
-        console.log('the sign...');
-        return getSpotifySong('The Sign');
+        return getSpotifySong('The+Sign');
       }
+      // return the song information
       return getSpotifySong(formatArgs(1));
 
     case 'movie-this':
-      return num1 * num2;
+      // check to see if song was provided in the arguments
+      if (!arguments[3]) {
+        console.log('Enter a movie name...');
+      }
+      return getMovie(formatArgs(0));
 
     case 'do-what-it-says':
       return num1 / num2;
@@ -140,18 +144,21 @@ const getSpotifySong = (query, id = keys.spotify.id, secret = keys.spotify.secre
  */
 const getMovie = (query, id = keys.omdb.id) => {
   axios
-    .get('https://rest.bandsintown.com/artists/' + query + '/events?app_id=' + id)
+    .get('http://www.omdbapi.com/?apikey=' + id + '&t=' + query)
     .then(res => {
-      if (!res.data.length) {
-        console.log('No venue found for artist ' + query);
+      if ((res.data.Response = 'False')) {
+        console.log('No movie found with name', query);
       } else {
-        res.data.forEach(value => {
-          console.log('Venue Name:', value.venue.name);
-          console.log('Venue Located In:', value.venue.city);
-          console.log('Event Date:', moment(value.datetime).format('MM/DD/YYYY'));
-          console.log('--------------------------------------------------');
-        });
+        console.log('Title :', res.data.Title);
+        console.log('Year :', res.data.Year);
+        console.log('IMDB Rating :', res.data.Ratings[0].Value);
+        console.log('Rotten Tomatoes Rating :', res.data.Ratings.length <= 1 ? 'N/A' : res.data.Ratings[1].Value);
+        console.log('Country :', res.data.Country);
+        console.log('Language :', res.data.Language);
+        console.log('Plot :', res.data.Plot);
+        console.log('Actors :', res.data.Actors);
       }
+      // console.log(res.data.Response = 'False');
     })
     .catch(error => {
       if (error.response) {

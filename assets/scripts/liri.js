@@ -64,13 +64,13 @@ const getBandsInTown = (artist = 'celion+dion', key = keys.BIT.id) => {
 const getBandsInTown2 = () => {
   axios
     .get('https://rest.bandsintown.com/artists/celine+dion/events?app_id=codingbootcamp')
-    .then(function(data) {
-      Object.values(data).forEach(value => {
-        console.log('Venue Name:', value.venue);
-        // console.log('Venue Located In:', value.venue.city);
-        // console.log('Event Date:', moment(value.datetime).format('MM/DD/YYYY'));
-        // console.log('--------------------------------------------------');
-        console.log(value);
+    .then(function(res) {
+      // console.log(res);
+      res.data.forEach(value => {
+        console.log('Venue Name:', value.venue.name);
+        console.log('Venue Located In:', value.venue.city);
+        console.log('Event Date:', moment(value.datetime).format('MM/DD/YYYY'));
+        console.log('--------------------------------------------------');
       });
     })
     .catch(function(error) {

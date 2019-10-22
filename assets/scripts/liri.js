@@ -4,43 +4,61 @@ const keys = require('./keys.js');
 const moment = require('moment');
 const axios = require('axios');
 const Spotify = require('node-spotify-api');
+const fs = require('fs');
 
-console.log(keys.bit.id);
-console.log(keys.omdb.id);
+// console.log(keys.bit.id);
+// console.log(keys.omdb.id);
 
-const lookupCommand = arguments => {
-  switch (arguments[2]) {
+/**
+ * function to take commands from process.env and does something..
+ * @param {String} primaryArg the argument used to determine what this function will do
+ * @param {array} secondaryArg the arguments that follows the primaryArg from process.args
+ */
+const lookupCommand = (primaryArg, secondaryArg) => {
+  console.log('primaryArg (LOOKUPCOMMAND):', primaryArg);
+  console.log('secondaryArg (LOOKUPCOMMAND):', secondaryArg);
+  switch (primaryArg) {
     case 'concert-this':
       // check to see if artist was provided in the arguments
-      if (!arguments[3]) {
+      if (!secondaryArg) {
         console.log('Enter an artist...');
         break;
       }
       // return venue information for the band
-      return getBandsInTown(formatArgs(0));
+      return getBandsInTown(formatArgs(0, secondaryArg));
 
     case 'spotify-this-song':
       // check to see if song was provided in the arguments
-      if (!arguments[3]) {
+      if (!secondaryArg) {
         return getSpotifySong('The+Sign');
       }
       // return the song information
-      return getSpotifySong(formatArgs(1));
+      return getSpotifySong(formatArgs(1, secondaryArg));
 
     case 'movie-this':
       // check to see if song was provided in the arguments
-      if (!arguments[3]) {
+      if (!secondaryArg) {
         console.log('Enter a movie name...');
       }
-      return getMovie(formatArgs(0));
+      return getMovie(formatArgs(0, secondaryArg));
 
     case 'do-what-it-says':
-      return num1 / num2;
-
+      getInputFromFile('../files/random.txt');
+      break;
     default:
-      console.log('enter a valid command...');
+      console.log('Enter a valid command...');
       break;
   }
+};
+
+const removeFirstThreeArgs = (arguments = process.argv) => {
+  // create a copy of arguments
+  const copyOfArgs = [...arguments];
+
+  // removed the first three arguments
+  copyOfArgs.splice(0, 3);
+
+  return copyOfArgs;
 };
 
 /**
@@ -49,20 +67,14 @@ const lookupCommand = arguments => {
  * @param {number} num the number that indicates which case to replace commas with
  * @param {array} arguments the arguments passed in from process.argv
  */
-const formatArgs = (num, arguments = process.argv) => {
-  // create a copy of arguments
-  const copyOfArgs = [...arguments];
-
-  // removed the first three arguments
-  copyOfArgs.splice(0, 3);
-
+const formatArgs = (num, arr) => {
   switch (num) {
     case 0:
       // return a string with all the commas replaced with +
-      return copyOfArgs.toString().replace(/,/g, '+');
+      return arr.toString().replace(/,/g, '+');
     case 1:
       // return a string with all the commas replaced with +
-      return copyOfArgs.toString().replace(/,/g, ' ');
+      return arr.toString().replace(/,/g, ' ');
   }
 };
 
@@ -143,10 +155,11 @@ const getSpotifySong = (query, id = keys.spotify.id, secret = keys.spotify.secre
  * @param {number} id the api id
  */
 const getMovie = (query, id = keys.omdb.id) => {
+  console.log('query :', query);
   axios
     .get('http://www.omdbapi.com/?apikey=' + id + '&t=' + query)
     .then(res => {
-      if ((res.data.Response = 'False')) {
+      if (res.data.Response === 'False') {
         console.log('No movie found with name', query);
       } else {
         console.log('Title :', res.data.Title);
@@ -158,7 +171,6 @@ const getMovie = (query, id = keys.omdb.id) => {
         console.log('Plot :', res.data.Plot);
         console.log('Actors :', res.data.Actors);
       }
-      // console.log(res.data.Response = 'False');
     })
     .catch(error => {
       if (error.response) {
@@ -179,4 +191,28 @@ const getMovie = (query, id = keys.omdb.id) => {
     });
 };
 
-console.log(lookupCommand(process.argv));
+const getInputFromFile = filename => {
+  fs.readFile(filename, 'utf8', (error, data) => {
+    // If the code experiences any errors it will log the error to the console.
+    if (error) {
+      return console.log(error);
+    }
+
+    // Then split it by commas (to make it more readable)
+    const dataArr = data.split(',');
+
+    const primaryArg = dataArr[0].toString().trim();
+
+    secondaryArg = [...dataArr]
+      .splice(1, 1) // grab the second part of the array
+      .toString() // turn arr into a string
+      // .replace(/['"]+/g, '') // remove quotes
+      .split(' '); // build array base on spaces (lookupCommand expects an arr for 2nd arg)
+    console.log('dataArr[0] :', dataArr[0]);
+    console.log('secondaryArg :', secondaryArg);
+
+    return lookupCommand(primaryArg, secondaryArg);
+  });
+};
+
+console.log(lookupCommand(process.argv[2], removeFirstThreeArgs()));

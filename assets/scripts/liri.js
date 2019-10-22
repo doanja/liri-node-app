@@ -3,6 +3,7 @@ require('dotenv').config();
 const keys = require('./keys.js');
 const fetch = require('node-fetch');
 const moment = require('moment');
+const axios = require('axios');
 
 // var spotify = new Spotify(keys.spotify);
 
@@ -15,7 +16,7 @@ const lookupCommand = arguments => {
     switch (arguments[2]) {
       case 'concert-this':
         // console.log('concert-this is called');
-        return getBandsInTown(arguments[3]);
+        return getBandsInTown2(arguments[3]);
 
       case 'spotify-this-song':
         return num1 - num2;
@@ -57,6 +58,37 @@ const getBandsInTown = (artist = 'celion+dion', key = keys.BIT.id) => {
     })
     .catch(err => {
       console.log('error :', err);
+    });
+};
+
+const getBandsInTown2 = () => {
+  axios
+    .get('https://rest.bandsintown.com/artists/celine+dion/events?app_id=codingbootcamp')
+    .then(function(data) {
+      Object.values(data).forEach(value => {
+        console.log('Venue Name:', value.venue);
+        // console.log('Venue Located In:', value.venue.city);
+        // console.log('Event Date:', moment(value.datetime).format('MM/DD/YYYY'));
+        // console.log('--------------------------------------------------');
+        console.log(value);
+      });
+    })
+    .catch(function(error) {
+      if (error.response) {
+        // The request was made and the server responded with a status code
+        // that falls out of the range of 2xx
+        console.log(error.response.data);
+        console.log(error.response.status);
+        console.log(error.response.headers);
+      } else if (error.request) {
+        // The request was made but no response was received
+        // `error.request` is an object that comes back with details pertaining to the error that occurred.
+        console.log(error.request);
+      } else {
+        // Something happened in setting up the request that triggered an Error
+        console.log('Error', error.message);
+      }
+      console.log(error.config);
     });
 };
 

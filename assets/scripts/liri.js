@@ -95,6 +95,10 @@ const getBandsInTown = (query, id = keys.bit.id) => {
           console.log('Venue Located In:', value.venue.city);
           console.log('Event Date:', moment(value.datetime).format('MM/DD/YYYY'));
           console.log('--------------------------------------------------');
+          writeInputToFile(value.venue.name);
+          writeInputToFile(value.venue.city);
+          writeInputToFile(moment(value.datetime).format('MM/DD/YYYY'));
+          writeInputToFile('--------------------------------------------------');
         });
       }
     })
@@ -141,6 +145,11 @@ const getSpotifySong = (query, id = keys.spotify.id, secret = keys.spotify.secre
           console.log('Preview:', track.preview_url);
           console.log('Album:', track.album.name);
           console.log('--------------------------------------------------');
+          writeInputToFile(track.artists[0].name);
+          writeInputToFile(track.name);
+          writeInputToFile(track.preview_url);
+          writeInputToFile(track.album.name);
+          writeInputToFile('--------------------------------------------------');
         });
       }
     })
@@ -170,6 +179,14 @@ const getMovie = (query, id = keys.omdb.id) => {
         console.log('Language :', res.data.Language);
         console.log('Plot :', res.data.Plot);
         console.log('Actors :', res.data.Actors);
+        writeInputToFile(res.data.Title);
+        writeInputToFile(res.data.Year);
+        writeInputToFile(res.data.Ratings[0].Value);
+        writeInputToFile(res.data.Ratings.length <= 1 ? 'N/A' : res.data.Ratings[1].Value);
+        writeInputToFile(res.data.Country);
+        writeInputToFile(res.data.Language);
+        writeInputToFile(res.data.Plot);
+        writeInputToFile(res.data.Actors);
       }
     })
     .catch(error => {
@@ -210,7 +227,7 @@ const getInputFromFile = filename => {
     secondaryArg = [...dataArr]
       .splice(1, 1) // grab the second part of the array
       .toString() // turn arr into a string
-      // .replace(/['"]+/g, '') // remove quotes
+      .replace(/['"]+/g, '') // remove quotes
       .split(' '); // build array base on spaces (lookupCommand expects an arr for 2nd arg)
     console.log('dataArr[0] :', dataArr[0]);
     console.log('secondaryArg :', secondaryArg);
@@ -219,7 +236,7 @@ const getInputFromFile = filename => {
   });
 };
 
-const writeInputToFile = (filename, text) => {
+const writeInputToFile = (text, filename = '../files/log.txt') => {
   // Next, we append the text into the "sample.txt" file.
   // If the file didn't exist, then it gets created on the fly.
   fs.appendFile(filename, text + '\n', err => {
@@ -236,4 +253,4 @@ const writeInputToFile = (filename, text) => {
 };
 
 console.log(lookupCommand(process.argv[2], removeFirstThreeArgs()));
-// writeInputToFile('../files/log.txt', 'testing');
+// writeInputToFile('testing', '../files/log.txt');

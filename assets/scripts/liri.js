@@ -6,17 +6,12 @@ const axios = require('axios');
 const Spotify = require('node-spotify-api');
 const fs = require('fs');
 
-// console.log(keys.bit.id);
-// console.log(keys.omdb.id);
-
 /**
  * function to take commands from process.env and does something..
  * @param {String} primaryArg the argument used to determine what this function will do
  * @param {array} secondaryArg the arguments that follows the primaryArg from process.args
  */
 const lookupCommand = (primaryArg, secondaryArg) => {
-  console.log('primaryArg (LOOKUPCOMMAND):', primaryArg);
-  console.log('secondaryArg (LOOKUPCOMMAND):', secondaryArg);
   switch (primaryArg) {
     case 'concert-this':
       // check to see if artist was provided in the arguments
@@ -229,8 +224,6 @@ const getInputFromFile = filename => {
       .toString() // turn arr into a string
       .replace(/['"]+/g, '') // remove quotes
       .split(' '); // build array base on spaces (lookupCommand expects an arr for 2nd arg)
-    console.log('dataArr[0] :', dataArr[0]);
-    console.log('secondaryArg :', secondaryArg);
 
     return lookupCommand(primaryArg, secondaryArg);
   });
@@ -244,13 +237,7 @@ const writeInputToFile = (text, filename = '../files/log.txt') => {
     if (err) {
       console.log(err);
     }
-
-    // If no error is experienced, we'll log the phrase "Content Added" to our node console.
-    else {
-      console.log('Content Added!');
-    }
   });
 };
 
 console.log(lookupCommand(process.argv[2], removeFirstThreeArgs()));
-// writeInputToFile('testing', '../files/log.txt');

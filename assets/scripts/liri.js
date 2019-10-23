@@ -82,7 +82,7 @@ const getBandsInTown = (query, id = keys.bit.id) => {
   axios
     .get('https://rest.bandsintown.com/artists/' + query + '/events?app_id=' + id)
     .then(res => {
-      if (res.data.length === 18) {
+      if (res.data.length === 18 || res.data.length === 0) {
         console.log('No venue found for artist ' + query);
       } else {
         res.data.forEach(value => {
@@ -159,7 +159,6 @@ const getSpotifySong = (query, id = keys.spotify.id, secret = keys.spotify.secre
  * @param {number} id the api id
  */
 const getMovie = (query, id = keys.omdb.id) => {
-  console.log('query :', query);
   axios
     .get('http://www.omdbapi.com/?apikey=' + id + '&t=' + query)
     .then(res => {

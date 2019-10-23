@@ -87,7 +87,7 @@ const getBandsInTown = (query, id = keys.bit.id) => {
   axios
     .get('https://rest.bandsintown.com/artists/' + query + '/events?app_id=' + id)
     .then(res => {
-      if (!res.data.length) {
+      if (res.data.length === 18) {
         console.log('No venue found for artist ' + query);
       } else {
         res.data.forEach(value => {
@@ -235,5 +235,5 @@ const writeInputToFile = (filename, text) => {
   });
 };
 
-// console.log(lookupCommand(process.argv[2], removeFirstThreeArgs()));
-writeInputToFile('../files/log.txt', 'testing');
+console.log(lookupCommand(process.argv[2], removeFirstThreeArgs()));
+// writeInputToFile('../files/log.txt', 'testing');

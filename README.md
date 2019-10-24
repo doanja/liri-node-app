@@ -30,6 +30,7 @@ Liri-node-app is a command line node app that takes in parameters and gives the 
 ## Example Output
 
 1. concert-this
+
    ![concert-this-image](assets/images/concert-this.png?raw=true 'concert-this-image')
 
 2. spotify-this-song
